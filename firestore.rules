@@ -1,0 +1,37 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /books/{bookId} {
+      // Siapa saja boleh melihat
+      allow read: if true;
+
+      // Hanya pemilik yang boleh menambah, mengubah, menghapus.
+      // Ganti GANTI_DENGAN_UID_KAMU dengan UID akun Google kamu.
+      allow create, update: if request.auth != null
+        && request.auth.uid == 'GANTI_DENGAN_UID_KAMU'
+        && request.resource.data.title is string
+        && request.resource.data.title.size() > 0
+        && request.resource.data.title.size() <= 300
+        && (!('coverData' in request.resource.data)
+            || request.resource.data.coverData.size() <= 150000);
+
+      allow delete: if request.auth != null
+        && request.auth.uid == 'GANTI_DENGAN_UID_KAMU';
+    }
+
+    match /categories/{catId} {
+      // Siapa saja boleh membaca daftar kategori
+      allow read: if true;
+
+      // Hanya pemilik yang boleh mengelola kategori
+      allow create, update: if request.auth != null
+        && request.auth.uid == 'GANTI_DENGAN_UID_KAMU'
+        && request.resource.data.name is string
+        && request.resource.data.name.size() > 0
+        && request.resource.data.name.size() <= 100;
+
+      allow delete: if request.auth != null
+        && request.auth.uid == 'GANTI_DENGAN_UID_KAMU';
+    }
+  }
+}

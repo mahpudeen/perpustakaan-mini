@@ -1,0 +1,19 @@
+{
+  "name": "perpustakaan-mini",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "nuxt dev",
+    "build": "nuxt build",
+    "preview": "nuxt preview",
+    "postinstall": "nuxt prepare"
+  },
+  "dependencies": {
+    "@zxing/browser": "^0.1.5",
+    "@zxing/library": "^0.21.3",
+    "firebase": "^11.10.0",
+    "nuxt": "^3.17.0",
+    "vue": "latest",
+    "vue-router": "latest"
+  }
+}
