@@ -40,6 +40,13 @@ onBeforeUnmount(() => {
 <template>
   <div class="scanner">
     <video ref="video" playsinline muted />
+    <div class="scanner-viewfinder" aria-hidden="true">
+      <span class="corner tl" />
+      <span class="corner tr" />
+      <span class="corner bl" />
+      <span class="corner br" />
+      <span class="laser" />
+    </div>
     <p class="scanner-status">{{ status }}</p>
     <button type="button" class="btn" @click="emit('close')">Tutup kamera</button>
   </div>

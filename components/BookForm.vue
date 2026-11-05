@@ -142,7 +142,10 @@ const submit = () => {
 <template>
   <form class="form" @submit.prevent="submit">
     <section class="form-block">
-      <h2>Cari lewat ISBN</h2>
+      <div class="form-block-head">
+        <span class="step-badge" aria-hidden="true">1</span>
+        <h2>Cari lewat ISBN</h2>
+      </div>
       <div class="row">
         <input
           v-model="form.isbn"
@@ -153,7 +156,10 @@ const submit = () => {
           @keydown.enter.prevent="runLookup"
         />
         <button type="button" class="btn" @click="runLookup">Cari data</button>
-        <button type="button" class="btn btn-primary" @click="showScanner = true">Scan barcode</button>
+        <button type="button" class="btn btn-primary" @click="showScanner = true">
+          <IconsIconScan :size="16" />
+          <span>Scan barcode</span>
+        </button>
       </div>
       <IsbnScanner v-if="showScanner" @detected="onScanned" @close="showScanner = false" />
       <p v-if="lookup.state !== 'idle'" class="hint" :class="{ warn: lookup.state === 'missing' }">
@@ -165,7 +171,10 @@ const submit = () => {
     </section>
 
     <section class="form-block">
-      <h2>Data buku</h2>
+      <div class="form-block-head">
+        <span class="step-badge" aria-hidden="true">2</span>
+        <h2>Data buku</h2>
+      </div>
       <label class="field">
         <span>Judul</span>
         <input v-model="form.title" class="input" required />
@@ -209,7 +218,10 @@ const submit = () => {
     </section>
 
     <section class="form-block">
-      <h2>Letak di rak</h2>
+      <div class="form-block-head">
+        <span class="step-badge" aria-hidden="true">3</span>
+        <h2>Letak di rak</h2>
+      </div>
       <div class="grid-2">
         <label class="field">
           <span>Rak</span>
@@ -236,13 +248,16 @@ const submit = () => {
     </section>
 
     <section class="form-block">
-      <h2>Sampul</h2>
+      <div class="form-block-head">
+        <span class="step-badge" aria-hidden="true">4</span>
+        <h2>Sampul</h2>
+      </div>
       <div class="cover-edit">
         <div class="cover-edit-preview">
           <BookCover :book="{ title: form.title || 'Tanpa judul', coverData: form.coverData, coverUrl: form.coverUrl }" />
         </div>
         <div class="cover-edit-actions">
-          <label class="btn">
+          <label class="btn btn-primary">
             Pilih atau foto sampul
             <input type="file" accept="image/*" hidden @change="onCoverFile" />
           </label>
@@ -259,7 +274,7 @@ const submit = () => {
     </section>
 
     <p v-if="formError" class="hint warn" role="alert">{{ formError }}</p>
-    <button class="btn btn-primary btn-wide" :disabled="saving">
+    <button class="btn btn-primary btn-wide btn-save-sticky" :disabled="saving">
       {{ saving ? 'Menyimpan…' : submitLabel || 'Simpan buku' }}
     </button>
   </form>

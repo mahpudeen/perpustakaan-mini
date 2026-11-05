@@ -87,14 +87,17 @@ const confirmDelete = async (cat: { id: string; name: string }) => {
 </script>
 
 <template>
-  <div class="narrow">
+  <div class="cat-page">
     <div class="page-head">
       <div>
-        <NuxtLink to="/" class="back">← Kembali</NuxtLink>
+        <NuxtLink to="/" class="back">← Kembali ke daftar</NuxtLink>
         <h1>Kategori</h1>
         <p class="lede">Kelola daftar kategori buku. Setiap buku mengacu ke salah satu kategori ini.</p>
       </div>
-      <button class="btn btn-primary" type="button" @click="openAdd">+ Tambah kategori</button>
+      <button class="btn btn-primary" type="button" @click="openAdd">
+        <IconsIconPlus :size="16" />
+        <span>Tambah kategori</span>
+      </button>
     </div>
 
     <!-- Form modal -->
@@ -158,22 +161,27 @@ const confirmDelete = async (cat: { id: string; name: string }) => {
     <!-- List -->
     <p v-if="error" class="notice warn">Gagal memuat: {{ error }}</p>
     <p v-else-if="!loaded" class="notice">Memuat…</p>
-    <p v-else-if="!categories.length" class="notice cat-empty">
-      Belum ada kategori. Klik <strong>+ Tambah kategori</strong> untuk mulai.
-    </p>
+    <div v-else-if="!categories.length" class="notice empty-state">
+      <span class="empty-icon" aria-hidden="true">
+        <IconsIconTag :size="48" />
+      </span>
+      <p>Belum ada kategori. Klik <strong>+ Tambah kategori</strong> untuk mulai.</p>
+    </div>
 
-    <ul v-else class="cat-list">
-      <li v-for="cat in categories" :key="cat.id" class="cat-item">
-        <div class="cat-color-bar" :style="{ background: cat.color }" />
-        <div class="cat-info">
-          <strong class="cat-name">{{ cat.name }}</strong>
-          <span v-if="cat.description" class="cat-desc">{{ cat.description }}</span>
-          <span class="cat-count">
+    <ul v-else class="cat-grid">
+      <li v-for="cat in categories" :key="cat.id" class="cat-card">
+        <div class="cat-top">
+          <div class="cat-title-row">
+            <span class="cat-dot" :style="{ background: cat.color }" />
+            <strong class="cat-name">{{ cat.name }}</strong>
+          </div>
+          <span class="cat-count-pill">
             {{ bookCountByCategory[cat.name] ?? 0 }} buku
           </span>
         </div>
+        <p v-if="cat.description" class="cat-desc">{{ cat.description }}</p>
         <div class="cat-actions">
-          <button class="btn" type="button" @click="openEdit(cat)">Edit</button>
+          <button class="btn btn-ghost" type="button" @click="openEdit(cat)">Edit</button>
           <button
             class="btn btn-danger"
             type="button"
@@ -189,79 +197,223 @@ const confirmDelete = async (cat: { id: string; name: string }) => {
 </template>
 
 <style scoped>
+.cat-page {
+  max-width: 960px;
+  margin-inline: auto;
+}
+
 .page-head {
   display: flex;
   flex-wrap: wrap;
   align-items: flex-end;
   justify-content: space-between;
-  gap: 1rem;
+  gap: 1.25rem;
   margin-bottom: 2rem;
 }
 
 /* Modal */
 .modal-backdrop {
-  position: fixed; inset: 0;
-  background: rgba(22, 36, 44, 0.45);
-  display: flex; align-items: center; justify-content: center;
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 22, 0.55);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
   z-index: 200;
   padding: 1rem;
 }
+
 .modal {
-  background: var(--card);
+  background: var(--surface);
   border: 1px solid var(--line);
-  border-radius: 14px;
+  border-radius: var(--radius);
   padding: 1.75rem;
-  width: 100%; max-width: 480px;
-  box-shadow: 0 8px 32px rgba(22, 36, 44, 0.22);
+  width: 100%;
+  max-width: 480px;
+  box-shadow: var(--shadow-2);
 }
+
 .modal-head {
-  display: flex; align-items: center; justify-content: space-between;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
   margin-bottom: 1.25rem;
 }
-.modal-head h2 { font-size: 1.15rem; }
-.modal-close {
-  background: none; border: none; cursor: pointer;
-  font-size: 1.1rem; color: var(--muted); padding: 0.25rem 0.5rem;
-  border-radius: 6px; line-height: 1;
+
+.modal-head h2 {
+  font-family: var(--serif);
+  font-size: 1.25rem;
+  font-weight: 500;
+  color: var(--ink);
 }
-.modal-close:hover { background: var(--inside); }
-.cat-form { display: grid; gap: 1rem; }
-.req { color: var(--danger); }
-.req-opt { color: var(--muted); font-weight: 400; font-size: 0.88rem; }
-.modal-actions { display: flex; gap: 0.6rem; justify-content: flex-end; margin-top: 0.5rem; }
+
+.modal-close {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 1.1rem;
+  color: var(--ink-2);
+  padding: 0.35rem 0.6rem;
+  border-radius: var(--radius-sm);
+  line-height: 1;
+  transition: background 150ms var(--ease), color 150ms var(--ease);
+}
+
+.modal-close:hover {
+  background: var(--surface-2);
+  color: var(--ink);
+}
+
+.cat-form {
+  display: grid;
+  gap: 1.15rem;
+}
+
+.req {
+  color: var(--danger);
+}
+
+.req-opt {
+  color: var(--ink-2);
+  font-weight: 400;
+  font-size: 0.85rem;
+}
+
+.modal-actions {
+  display: flex;
+  gap: 0.6rem;
+  justify-content: flex-end;
+  margin-top: 0.5rem;
+}
 
 /* Color swatches */
-.color-row { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 0.25rem; }
+.color-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 0.25rem;
+}
+
 .color-swatch {
-  width: 2rem; height: 2rem;
+  width: 2rem;
+  height: 2rem;
   border-radius: 50%;
   cursor: pointer;
   border: 3px solid transparent;
   outline: none;
-  transition: transform 0.15s, border-color 0.15s;
+  transition: transform 150ms var(--ease), border-color 150ms var(--ease);
 }
-.color-swatch:hover { transform: scale(1.15); }
-.color-swatch.selected { border-color: var(--ink); transform: scale(1.18); }
 
-/* Category list */
-.cat-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 0.6rem; }
-.cat-item {
-  display: flex; align-items: center; gap: 1rem;
-  background: var(--card); border: 1px solid var(--line);
-  border-radius: 10px; overflow: hidden;
-  transition: box-shadow 0.15s;
+.color-swatch:hover {
+  transform: scale(1.15);
 }
-.cat-item:hover { box-shadow: 0 2px 8px rgba(22, 36, 44, 0.1); }
-.cat-color-bar { width: 6px; align-self: stretch; flex-shrink: 0; }
-.cat-info { flex: 1; padding: 0.85rem 0; display: flex; flex-direction: column; gap: 0.2rem; }
-.cat-name { font-size: 1rem; }
-.cat-desc { font-size: 0.85rem; color: var(--muted); }
-.cat-count { font-size: 0.8rem; color: var(--wood-deep); }
-.cat-actions { display: flex; gap: 0.5rem; padding-right: 0.85rem; flex-shrink: 0; }
-.cat-empty { font-style: italic; }
+
+.color-swatch.selected {
+  border-color: var(--ink);
+  transform: scale(1.18);
+  box-shadow: 0 0 0 2px var(--surface);
+}
+
+/* Category grid cards */
+.cat-grid {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1rem;
+}
+
+.cat-card {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 1rem;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 1.25rem;
+  box-shadow: var(--shadow-1);
+  transition: transform 150ms var(--ease), box-shadow 150ms var(--ease), border-color 150ms var(--ease);
+}
+
+.cat-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-2);
+  border-color: color-mix(in srgb, var(--accent) 30%, var(--line));
+}
+
+.cat-top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+
+.cat-title-row {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  flex: 1;
+}
+
+.cat-dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.cat-name {
+  font-family: var(--serif);
+  font-size: 1.15rem;
+  font-weight: 500;
+  color: var(--ink);
+  line-height: 1.25;
+}
+
+.cat-desc {
+  font-size: 0.88rem;
+  color: var(--ink-2);
+  margin: 0;
+  line-height: 1.5;
+}
+
+.cat-count-pill {
+  font-size: 0.78rem;
+  font-weight: 500;
+  color: var(--ink-2);
+  background: var(--surface-2);
+  border: 1px solid var(--line);
+  padding: 0.2rem 0.55rem;
+  border-radius: 999px;
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+  flex-shrink: 0;
+}
+
+.cat-actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0.5rem;
+  margin-top: auto;
+  padding-top: 0.5rem;
+  border-top: 1px solid var(--line);
+}
+
+.cat-actions .btn {
+  padding: 0.35rem 0.75rem;
+  font-size: 0.85rem;
+  min-height: 32px;
+}
 
 @media (max-width: 520px) {
-  .cat-actions { flex-direction: column; padding: 0.6rem 0.6rem 0.6rem 0; }
-  .page-head { flex-direction: column; align-items: flex-start; }
+  .page-head {
+    flex-direction: column;
+    align-items: flex-start;
+  }
 }
 </style>

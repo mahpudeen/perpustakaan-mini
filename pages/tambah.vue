@@ -31,7 +31,11 @@ const save = async (input: BookInput) => {
 
 <template>
   <section class="narrow">
-    <div class="intro"><h1>Tambah buku</h1></div>
+    <NuxtLink to="/" class="back">← Kembali ke daftar</NuxtLink>
+    <div class="intro">
+      <h1>Tambah buku</h1>
+      <p class="lede">Isi data buku baru atau gunakan scan barcode ISBN.</p>
+    </div>
     <p v-if="error" class="notice warn" role="alert">{{ error }}</p>
     <BookForm :initial="initial" :saving="saving" submit-label="Simpan buku" @submit="save" />
   </section>

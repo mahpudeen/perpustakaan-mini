@@ -75,26 +75,38 @@ const pick = (shelf: number, cube: number) => {
 
       <div v-if="selected" class="drawer">
         <div class="drawer-head">
-          <h2>
-            Rak {{ selected.shelf }}, kubus {{ selected.cube }}
+          <div class="drawer-title-wrap">
+            <h2>
+              Rak {{ selected.shelf }}, kubus {{ selected.cube }}
+            </h2>
             <span v-if="cubeCategory(selectedBooks)" class="drawer-cat">{{ cubeCategory(selectedBooks) }}</span>
-          </h2>
+          </div>
           <NuxtLink
             v-if="isOwner"
-            class="btn"
+            class="btn btn-primary"
             :to="{ path: '/tambah', query: { rak: selected.shelf, kubus: selected.cube } }"
           >
-            Tambah buku ke kubus ini
+            <IconsIconPlus :size="16" />
+            <span>Tambah buku ke kubus ini</span>
           </NuxtLink>
         </div>
-        <p v-if="!selectedBooks.length" class="notice">Kubus ini masih kosong.</p>
+        <div v-if="!selectedBooks.length" class="notice empty-state">
+          <span class="empty-icon" aria-hidden="true">
+            <IconsIconBook :size="40" />
+          </span>
+          <p>Kubus ini masih kosong.</p>
+        </div>
         <div v-else class="grid">
           <BookCard v-for="b in selectedBooks" :key="b.id" :book="b" />
         </div>
       </div>
 
-      <div v-if="unplaced.length" class="drawer">
-        <h2>Belum ditempatkan ({{ unplaced.length }})</h2>
+      <div v-if="unplaced.length" class="drawer drawer-unplaced">
+        <div class="drawer-head">
+          <div class="drawer-title-wrap">
+            <h2>Belum ditempatkan ({{ unplaced.length }})</h2>
+          </div>
+        </div>
         <div class="grid">
           <BookCard v-for="b in unplaced" :key="b.id" :book="b" />
         </div>

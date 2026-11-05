@@ -21,6 +21,7 @@ export default defineNuxtConfig({
         },
       ],
     },
+    pageTransition: { name: 'page', mode: 'out-in' },
   },
   // Diisi lewat environment variable NUXT_PUBLIC_* (lihat .env.example)
   runtimeConfig: {

@@ -46,7 +46,7 @@ const remove = async () => {
 
 <template>
   <section>
-    <NuxtLink to="/" class="back">Kembali ke daftar</NuxtLink>
+    <NuxtLink to="/" class="back">← Kembali ke daftar</NuxtLink>
 
     <p v-if="!loaded" class="notice">Memuat buku…</p>
     <p v-else-if="!book" class="notice">Buku tidak ditemukan. Mungkin sudah dihapus.</p>
