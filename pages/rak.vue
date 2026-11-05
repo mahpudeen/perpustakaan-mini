@@ -59,12 +59,13 @@ const pick = (shelf: number, cube: number) => {
               </span>
               <span class="spines" aria-hidden="true">
                 <i
-                  v-for="b in inCube(s, n).slice(0, 14)"
+                  v-for="(b, idx) in inCube(s, n).slice(0, 14)"
                   :key="b.id"
                   :style="{
                     height: spineHeight(b.title) + '%',
                     width: spineWidth(b.title) + 'px',
                     background: `hsl(${hueFor(b.title)} 38% 38%)`,
+                    '--i': idx,
                   }"
                 />
               </span>

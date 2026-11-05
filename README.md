@@ -4,7 +4,9 @@ Katalog perpustakaan pribadi: Nuxt 3 (mode SPA) + Firebase (Auth Google + Firest
 
 ## Fitur
 - Daftar buku dalam bentuk tabel atau kartu dengan pengurutan kolom, filter kategori, pencarian, dan pagination
-- Tampilan rak: 2 rak x 15 kubus (5 baris x 3 kolom). Kategori kubus diambil dari buku di dalamnya, kubus kosong tidak punya kategori
+- Ekspor seluruh koleksi buku ke file CSV (format UTF-8 BOM untuk Excel / Spreadsheet)
+- Button mode gelap manual di navbar (tersimpan di penyimpanan lokal, mendukung tema terang/gelap dan preferensi sistem)
+- Tampilan rak: 2 rak x 15 kubus (5 baris x 3 kolom) dengan animasi buku terselip (spine filling effect) bertingkat (stagger) saat kubus terisi. Kategori kubus diambil dari buku di dalamnya, kubus kosong tidak punya kategori
 - Tambah, ubah, hapus buku (khusus pemilik)
 - Tambah lewat scan barcode ISBN (kamera) atau input manual
 - Sampul: dari Google Books / Open Library, atau foto sendiri (dikecilkan otomatis dan disimpan sebagai base64 di dokumen Firestore)

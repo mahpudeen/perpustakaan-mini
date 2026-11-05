@@ -10,6 +10,7 @@ import {
   type SortDirection,
   type ViewMode,
 } from '~/utils/bookTable'
+import { exportBooksToCsv } from '~/utils/exportCsv'
 import type { Book } from '~/composables/useBooks'
 
 useHead({ title: 'Perpustakaan Mini' })
@@ -297,6 +298,10 @@ watch(
 const pageList = computed(() =>
   buildPageList(paginationResult.value.currentPage, paginationResult.value.totalPages),
 )
+
+const onExportCsv = () => {
+  exportBooksToCsv(books.value, getCategoryName)
+}
 </script>
 
 <template>
@@ -355,26 +360,41 @@ const pageList = computed(() =>
         </select>
       </div>
 
-      <!-- Segmented Button: Tabel | Kartu -->
-      <div class="view-toggle" role="group" aria-label="Pilihan tampilan daftar buku">
+      <!-- Toolbar Actions: Ekspor CSV & View Toggle -->
+      <div class="toolbar-actions">
         <button
           type="button"
-          class="view-toggle-btn"
-          :aria-pressed="viewMode === 'tabel'"
-          @click="setViewMode('tabel')"
+          class="btn-csv-export"
+          :disabled="!books.length"
+          title="Unduh data seluruh buku ke file CSV"
+          aria-label="Unduh data buku ke CSV"
+          @click="onExportCsv"
         >
-          <IconsIconTable :size="16" />
-          <span>Tabel</span>
+          <IconsIconDownload :size="16" />
+          <span>Ekspor CSV</span>
         </button>
-        <button
-          type="button"
-          class="view-toggle-btn"
-          :aria-pressed="viewMode === 'kartu'"
-          @click="setViewMode('kartu')"
-        >
-          <IconsIconGrid :size="16" />
-          <span>Kartu</span>
-        </button>
+
+        <!-- Segmented Button: Tabel | Kartu -->
+        <div class="view-toggle" role="group" aria-label="Pilihan tampilan daftar buku">
+          <button
+            type="button"
+            class="view-toggle-btn"
+            :aria-pressed="viewMode === 'tabel'"
+            @click="setViewMode('tabel')"
+          >
+            <IconsIconTable :size="16" />
+            <span>Tabel</span>
+          </button>
+          <button
+            type="button"
+            class="view-toggle-btn"
+            :aria-pressed="viewMode === 'kartu'"
+            @click="setViewMode('kartu')"
+          >
+            <IconsIconGrid :size="16" />
+            <span>Kartu</span>
+          </button>
+        </div>
       </div>
     </div>
 

@@ -1,4 +1,14 @@
 <script setup lang="ts">
+import { useDark, useToggle } from '@vueuse/core'
+
+const isDark = useDark({
+  selector: 'html',
+  attribute: 'class',
+  valueDark: 'dark',
+  valueLight: 'light',
+})
+const toggleDark = useToggle(isDark)
+
 const { user, isOwner, logOut } = useAuth()
 const route = useRoute()
 
@@ -50,6 +60,17 @@ onBeforeUnmount(() => {
       </nav>
 
       <div class="auth">
+        <button
+          type="button"
+          class="theme-toggle-btn"
+          :aria-label="isDark ? 'Beralih ke mode terang' : 'Beralih ke mode gelap'"
+          :title="isDark ? 'Mode terang' : 'Mode gelap'"
+          @click="toggleDark()"
+        >
+          <IconsIconSun v-if="isDark" :size="18" />
+          <IconsIconMoon v-else :size="18" />
+        </button>
+
         <button v-if="user" class="link auth-btn" type="button" @click="leave">
           <IconsIconLogout :size="16" />
           <span>Keluar</span>
