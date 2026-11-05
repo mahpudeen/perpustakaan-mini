@@ -62,6 +62,21 @@ const selectedCategory = computed<Category | undefined>(() =>
   categoryList.value.find((c) => c.name === form.category),
 )
 
+// Daftar nama penulis unik dari buku-buku sebelumnya
+const existingAuthors = computed(() => {
+  const set = new Set<string>()
+  for (const b of books.value) {
+    const a = b.author?.trim()
+    if (a) set.add(a)
+  }
+  return Array.from(set).sort((a, b) => a.localeCompare(b, 'id'))
+})
+
+const onSelectAuthor = (e: Event) => {
+  const val = (e.target as HTMLSelectElement).value
+  if (val) form.author = val
+}
+
 // categories dari Firestore — lihat useCategories
 
 const cubeLabel = (n: number) =>
@@ -180,8 +195,32 @@ const submit = () => {
         <input v-model="form.title" class="input" required />
       </label>
       <label class="field">
-        <span>Penulis</span>
-        <input v-model="form.author" class="input" />
+        <span class="field-label-row">
+          <span>Penulis</span>
+          <span v-if="existingAuthors.length" class="field-opt">Ketik bebas atau pilih riwayat</span>
+        </span>
+        <div class="author-combobox">
+          <input
+            v-model="form.author"
+            list="author-list"
+            class="input"
+            placeholder="Tulis nama penulis…"
+          />
+          <datalist id="author-list">
+            <option v-for="a in existingAuthors" :key="a" :value="a" />
+          </datalist>
+          <!-- <select
+            v-if="existingAuthors.length"
+            class="input author-select"
+            aria-label="Pilih dari penulis sebelumnya"
+            @change="onSelectAuthor"
+          >
+            <option value="">— Pilih penulis sebelumnya ({{ existingAuthors.length }}) —</option>
+            <option v-for="a in existingAuthors" :key="a" :value="a" :selected="form.author === a">
+              {{ a }}
+            </option>
+          </select> -->
+        </div>
       </label>
       <div class="grid-2">
         <label class="field">
