@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
+  <style>
+    .spine-oak { fill: #b98a5b; }
+    .spine-accent { fill: #0b7a66; }
+    .spine-deep { fill: #8b6238; }
+    @media (prefers-color-scheme: dark) {
+      .spine-oak { fill: #c29563; }
+      .spine-accent { fill: #3cc9ae; }
+      .spine-deep { fill: #a07040; }
+    }
+  </style>
+  <!-- Book 1: Oak (left) -->
+  <rect class="spine-oak" x="4.5" y="9" width="6.5" height="19" rx="2" />
+  <!-- Book 2: Teal Accent (center, tallest) -->
+  <rect class="spine-accent" x="12.75" y="4" width="6.5" height="24" rx="2" />
+  <!-- Book 3: Deep Oak (right, medium) -->
+  <rect class="spine-deep" x="21" y="11" width="6.5" height="17" rx="2" />
+</svg>
