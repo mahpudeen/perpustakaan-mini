@@ -3,7 +3,7 @@
 Katalog perpustakaan pribadi: Nuxt 3 (mode SPA) + Firebase (Auth Google + Firestore). Bisa dilihat publik, hanya pemilik yang bisa mengubah.
 
 ## Fitur
-- Daftar buku dengan pencarian dan filter kategori
+- Daftar buku dalam bentuk tabel atau kartu dengan pengurutan kolom, filter kategori, pencarian, dan pagination
 - Tampilan rak: 2 rak x 15 kubus (5 baris x 3 kolom). Kategori kubus diambil dari buku di dalamnya, kubus kosong tidak punya kategori
 - Tambah, ubah, hapus buku (khusus pemilik)
 - Tambah lewat scan barcode ISBN (kamera) atau input manual

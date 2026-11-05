@@ -2,16 +2,26 @@
 import type { BookInput } from '~/composables/useBooks'
 
 const route = useRoute()
+const router = useRouter()
 const id = route.params.id as string
 const { books, loaded, updateBook, removeBook } = useBooks()
 const { isOwner } = useAuth()
+const listQuery = useState<Record<string, any>>('book-list-query', () => ({}))
 
 const book = computed(() => books.value.find((b) => b.id === id))
 useHead({ title: computed(() => (book.value ? `${book.value.title} · Perpustakaan Mini` : 'Buku')) })
 
-const editing = ref(false)
+const editing = ref(route.query.ubah === '1')
 const saving = ref(false)
 const error = ref('')
+
+watch(editing, (isEditing) => {
+  if (!isEditing && route.query.ubah) {
+    const q = { ...route.query }
+    delete q.ubah
+    router.replace({ query: q })
+  }
+})
 
 const dateText = computed(() => {
   const d = book.value?.purchaseDate
@@ -46,12 +56,12 @@ const remove = async () => {
 
 <template>
   <section>
-    <NuxtLink to="/" class="back">← Kembali ke daftar</NuxtLink>
+    <NuxtLink :to="{ path: '/', query: listQuery }" class="back">← Kembali ke daftar</NuxtLink>
 
     <p v-if="!loaded" class="notice">Memuat buku…</p>
     <p v-else-if="!book" class="notice">Buku tidak ditemukan. Mungkin sudah dihapus.</p>
 
-    <template v-else-if="editing">
+    <template v-else-if="editing && isOwner">
       <div class="narrow">
         <div class="intro"><h1>Ubah buku</h1></div>
         <p v-if="error" class="notice warn" role="alert">{{ error }}</p>
