@@ -360,8 +360,17 @@ const onExportCsv = () => {
         </select>
       </div>
 
-      <!-- Toolbar Actions: Ekspor CSV & View Toggle -->
+      <!-- Toolbar Actions: Import JSON, Ekspor CSV & View Toggle -->
       <div class="toolbar-actions">
+        <NuxtLink
+          v-if="isOwner"
+          to="/buku/import"
+          class="btn-csv-export"
+          title="Import buku dari format JSON"
+        >
+          <IconsIconUpload :size="16" />
+          <span>Import JSON</span>
+        </NuxtLink>
         <button
           type="button"
           class="btn-csv-export"
