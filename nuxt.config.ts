@@ -3,6 +3,9 @@ export default defineNuxtConfig({
   devtools: { enabled: false },
   // SPA: semua data diambil dari Firebase di browser
   ssr: false,
+  experimental: {
+    appManifest: false,
+  },
   css: ['~/assets/main.css'],
   app: {
     head: {

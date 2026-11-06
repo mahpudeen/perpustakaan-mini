@@ -33,5 +33,25 @@ service cloud.firestore {
       allow delete: if request.auth != null
         && request.auth.uid == 'GANTI_DENGAN_UID_KAMU';
     }
+
+    match /figures/{figureId} {
+      // Siapa saja boleh melihat koleksi figure
+      allow read: if true;
+
+      // Hanya pemilik yang boleh menambah dan mengubah figure
+      allow create, update: if request.auth != null
+        && request.auth.uid == 'GANTI_DENGAN_UID_KAMU'
+        && request.resource.data.name is string
+        && request.resource.data.name.size() > 0
+        && request.resource.data.name.size() <= 200
+        && request.resource.data.size in ['besar', 'medium', 'kecil']
+        && (!('anime' in request.resource.data)
+            || (request.resource.data.anime is string && request.resource.data.anime.size() <= 100))
+        && (!('photoData' in request.resource.data)
+            || request.resource.data.photoData.size() <= 150000);
+
+      allow delete: if request.auth != null
+        && request.auth.uid == 'GANTI_DENGAN_UID_KAMU';
+    }
   }
 }

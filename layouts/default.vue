@@ -49,6 +49,10 @@ onBeforeUnmount(() => {
           <IconsIconShelf :size="18" />
           <span>Rak</span>
         </NuxtLink>
+        <NuxtLink to="/figure">
+          <IconsIconFigure :size="18" />
+          <span>Figure</span>
+        </NuxtLink>
         <NuxtLink v-if="isOwner" to="/kategori">
           <IconsIconTag :size="18" />
           <span>Kategori</span>
@@ -95,6 +99,10 @@ onBeforeUnmount(() => {
       <NuxtLink to="/rak" class="tab-item">
         <IconsIconShelf :size="20" />
         <span>Rak</span>
+      </NuxtLink>
+      <NuxtLink to="/figure" class="tab-item">
+        <IconsIconFigure :size="20" />
+        <span>Figure</span>
       </NuxtLink>
       <NuxtLink v-if="isOwner" to="/kategori" class="tab-item">
         <IconsIconTag :size="20" />
