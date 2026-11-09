@@ -9,8 +9,8 @@ Katalog perpustakaan pribadi: Nuxt 3 (mode SPA) + Firebase (Auth Google + Firest
 - Tampilan rak: 2 rak x 15 kubus (5 baris x 3 kolom) dengan animasi buku terselip (spine filling effect) bertingkat (stagger) saat kubus terisi. Kategori kubus diambil dari buku di dalamnya, kubus kosong tidak punya kategori
 - Tambah, ubah, hapus buku (khusus pemilik)
 - Tambah lewat scan barcode ISBN (kamera) atau input manual
-- Sampul: dari Google Books / Open Library, atau foto sendiri (dikecilkan otomatis dan disimpan sebagai base64 di dokumen Firestore)
 - Koleksi action figure: kelola figure (nama, anime, ukuran besar/medium/kecil, foto, letak rak/kubus), tabel daftar figure dengan filter anime dan ukuran, penataan visual di rak bersama buku, serta impor massal JSON
+- Harga beli & dashboard pengeluaran: input harga beli opsional (Rupiah), filter & urutan harga di tabel buku dan figure, serta dashboard analitik pengeluaran khusus pemilik (per tahun, kategori, dan seri anime)
 
 Nomor kubus dihitung dari kiri atas: baris 1 = kubus 1 sampai 3, baris 2 = 4 sampai 6, dan seterusnya.
 

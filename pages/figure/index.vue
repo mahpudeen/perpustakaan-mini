@@ -11,6 +11,7 @@ import {
   type SortDirection,
 } from '~/utils/bookTable'
 import { sizeLabel, uniqueAnime } from '~/utils/figure'
+import { formatRupiah } from '~/utils/rupiah'
 
 useHead({ title: 'Koleksi Action Figure · Perpustakaan Mini' })
 
@@ -50,7 +51,7 @@ const sizeFilter = computed(() => {
 
 const sortColumn = computed<FigureSortColumn>(() => {
   const col = route.query.urut as FigureSortColumn
-  return ['nama', 'anime', 'size', 'tgl', 'letak'].includes(col) ? col : 'nama'
+  return ['nama', 'anime', 'size', 'tgl', 'letak', 'harga'].includes(col) ? col : 'nama'
 })
 
 const sortDirection = computed<SortDirection>(() => (route.query.arah === 'desc' ? 'desc' : 'asc'))
@@ -70,6 +71,17 @@ const viewMode = computed<ViewMode>(() => (route.query.tampil === 'tabel' ? 'tab
 
 const setViewMode = (mode: ViewMode) => {
   updateQuery({ tampil: mode === 'kartu' ? undefined : mode })
+}
+
+const priceFilter = computed<'isi' | 'kosong' | ''>(() => {
+  const val = route.query.harga
+  if (val === 'isi' || val === 'kosong') return val
+  return ''
+})
+
+const onPriceChange = (e: Event) => {
+  const val = (e.target as HTMLSelectElement).value
+  updateQuery({ harga: val || undefined, hal: 1 })
 }
 
 // Search input local state untuk debounce ke URL
@@ -96,6 +108,7 @@ const updateQuery = (changes: Record<string, string | number | undefined | null>
   if (!next.q) delete next.q
   if (!next.anime) delete next.anime
   if (!next.size) delete next.size
+  if (!next.harga) delete next.harga
   if (next.urut === 'nama') delete next.urut
   if (next.arah === 'asc') delete next.arah
   if (next.hal === '1') delete next.hal
@@ -159,7 +172,7 @@ const goToPage = (page: number) => {
 const resetFilters = () => {
   searchInput.value = ''
   if (debounceTimer) clearTimeout(debounceTimer)
-  updateQuery({ q: undefined, anime: undefined, size: undefined, hal: 1 })
+  updateQuery({ q: undefined, anime: undefined, size: undefined, harga: undefined, hal: 1 })
 }
 
 // ── Dropdown Anime dengan Jumlah Figure ──
@@ -188,7 +201,7 @@ const animeOptions = computed(() => {
 
 // ── Filter, Sort, dan Pagination ──
 const filteredFigures = computed(() =>
-  filterFigures(figures.value, searchInput.value, animeFilter.value, sizeFilter.value),
+  filterFigures(figures.value, searchInput.value, animeFilter.value, sizeFilter.value, priceFilter.value),
 )
 
 const sortedFigures = computed(() =>
@@ -281,6 +294,18 @@ const pageList = computed(() =>
             <option value="medium">Medium</option>
             <option value="kecil">Kecil</option>
           </select>
+
+          <!-- Filter Harga Dropdown -->
+          <select
+            :value="priceFilter"
+            class="input select-price"
+            aria-label="Filter harga"
+            @change="onPriceChange"
+          >
+            <option value="">Harga: Semua</option>
+            <option value="isi">Sudah diisi</option>
+            <option value="kosong">Belum diisi</option>
+          </select>
         </div>
       </div>
 
@@ -338,6 +363,7 @@ const pageList = computed(() =>
               <th scope="col">Anime</th>
               <th scope="col">Ukuran</th>
               <th scope="col">Tgl Beli</th>
+              <th scope="col" class="col-price text-right">Harga</th>
               <th scope="col">Letak</th>
               <th scope="col" class="col-actions">Aksi</th>
             </tr>
@@ -349,6 +375,7 @@ const pageList = computed(() =>
               <td><div class="skeleton-bar badge" /></td>
               <td><div class="skeleton-bar short" /></td>
               <td><div class="skeleton-bar date" /></td>
+              <td class="col-price text-right"><div class="skeleton-bar short" /></td>
               <td><div class="skeleton-bar date" /></td>
               <td class="col-actions"><div class="skeleton-bar actions" /></td>
             </tr>
@@ -455,6 +482,19 @@ const pageList = computed(() =>
               </th>
               <th
                 scope="col"
+                class="col-price th-sortable text-right"
+                :aria-sort="sortColumn === 'harga' ? (sortDirection === 'asc' ? 'ascending' : 'descending') : 'none'"
+              >
+                <button type="button" class="th-sort-btn text-right" @click="toggleSort('harga')">
+                  <span>Harga</span>
+                  <IconsIconSort
+                    :direction="sortColumn === 'harga' ? sortDirection : 'none'"
+                    :size="14"
+                  />
+                </button>
+              </th>
+              <th
+                scope="col"
                 class="th-sortable"
                 :aria-sort="sortColumn === 'letak' ? (sortDirection === 'asc' ? 'ascending' : 'descending') : 'none'"
               >
@@ -509,6 +549,10 @@ const pageList = computed(() =>
               </td>
               <td>
                 <span v-if="f.purchaseDate">{{ formatTanggal(f.purchaseDate) }}</span>
+                <span v-else class="cell-empty">-</span>
+              </td>
+              <td class="col-price text-right font-tabular">
+                <span v-if="f.price != null">{{ formatRupiah(f.price) }}</span>
                 <span v-else class="cell-empty">-</span>
               </td>
               <td>

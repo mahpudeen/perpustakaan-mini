@@ -57,6 +57,10 @@ onBeforeUnmount(() => {
           <IconsIconTag :size="18" />
           <span>Kategori</span>
         </NuxtLink>
+        <NuxtLink v-if="isOwner" to="/pengeluaran">
+          <IconsIconChart :size="18" />
+          <span>Pengeluaran</span>
+        </NuxtLink>
         <NuxtLink v-if="isOwner" to="/tambah" class="nav-add">
           <IconsIconPlus :size="18" />
           <span>Tambah buku</span>
@@ -107,6 +111,10 @@ onBeforeUnmount(() => {
       <NuxtLink v-if="isOwner" to="/kategori" class="tab-item">
         <IconsIconTag :size="20" />
         <span>Kategori</span>
+      </NuxtLink>
+      <NuxtLink v-if="isOwner" to="/pengeluaran" class="tab-item">
+        <IconsIconChart :size="20" />
+        <span>Pengeluaran</span>
       </NuxtLink>
       <NuxtLink v-if="isOwner" to="/tambah" class="tab-item tab-add">
         <span class="tab-icon-wrap">

@@ -21,6 +21,7 @@ export interface Book {
   purchaseDate: string // YYYY-MM-DD
   coverUrl: string // dari Google Books / Open Library
   coverData: string // data:image/webp;base64,... (foto manual, sudah dikompres)
+  price: number | null // harga beli dalam Rupiah penuh, opsional
 }
 export type BookInput = Omit<Book, 'id'>
 
@@ -41,7 +42,14 @@ export const useBooks = () => {
       collection($db, 'books'),
       (snap) => {
         books.value = snap.docs
-          .map((d) => ({ id: d.id, ...(d.data() as Omit<Book, 'id'>) }))
+          .map((d) => {
+            const data = d.data() as any
+            return {
+              id: d.id,
+              ...data,
+              price: data.price != null ? Number(data.price) : null,
+            } as Book
+          })
           .sort((a, b) => a.title.localeCompare(b.title, 'id'))
         loaded.value = true
         error.value = null

@@ -2,6 +2,7 @@
 import { SHELF_COUNT, CUBE_COUNT } from '~/composables/useBooks'
 import { useFigures, type FigureInput, type FigureSize } from '~/composables/useFigures'
 import { canonicalAnime, sizeLabel, uniqueAnime } from '~/utils/figure'
+import { formatRupiah } from '~/utils/rupiah'
 
 definePageMeta({ middleware: 'owner' })
 useHead({ title: 'Impor Action Figure · Perpustakaan Mini' })
@@ -111,6 +112,7 @@ const checkData = () => {
           photoData: '',
           shelf: null,
           cube: null,
+          price: null,
         },
         errors: ['Baris bukan objek data figure yang valid.'],
         isDuplicateName: false,
@@ -141,6 +143,17 @@ const checkData = () => {
       const n = typeof obj.cube === 'number' ? obj.cube : Number(obj.cube)
       if (Number.isInteger(n)) cube = n
       else cubeInvalid = true
+    }
+
+    // Parse price
+    let price: number | null = null
+    if (obj.price !== undefined && obj.price !== null && obj.price !== '') {
+      const p = typeof obj.price === 'number' ? obj.price : Number(obj.price)
+      if (Number.isInteger(p) && p >= 0) {
+        price = p
+      } else {
+        errors.push('harga harus bilangan bulat >= 0')
+      }
     }
 
     // ── Validasi Error ──
@@ -215,6 +228,7 @@ const checkData = () => {
         photoData: '',
         shelf,
         cube,
+        price,
       },
       errors,
       isDuplicateName: isDuplicate,
@@ -264,9 +278,9 @@ const runImport = async () => {
 
 const fillSample = () => {
   jsonText.value = `[
-  { "name": "Iron Man Mark 85", "size": "besar", "purchaseDate": "2024-03-15", "shelf": 1, "cube": 3 },
-  { "name": "Monkey D. Luffy", "anime": "One Piece", "size": "medium" },
-  { "name": "Roronoa Zoro", "anime": "one piece", "size": "medium" }
+  { "name": "Iron Man Mark 85", "size": "besar", "purchaseDate": "2024-03-15", "price": 450000, "shelf": 1, "cube": 3 },
+  { "name": "Monkey D. Luffy", "anime": "One Piece", "size": "medium", "price": 185000 },
+  { "name": "Roronoa Zoro", "anime": "one piece", "size": "medium", "price": 185000 }
 ]`
   checkData()
 }
@@ -370,6 +384,7 @@ const fillSample = () => {
               <th scope="col">Anime (Diseragamkan)</th>
               <th scope="col">Ukuran</th>
               <th scope="col">Tgl Beli</th>
+              <th scope="col" class="col-price">Harga</th>
               <th scope="col">Letak</th>
               <th scope="col" class="col-status">Status</th>
             </tr>
@@ -401,6 +416,10 @@ const fillSample = () => {
               </td>
               <td>
                 <span v-if="r.figure.purchaseDate">{{ r.figure.purchaseDate }}</span>
+                <span v-else class="cell-empty">-</span>
+              </td>
+              <td class="col-price font-tabular">
+                <span v-if="r.figure.price != null">{{ formatRupiah(r.figure.price) }}</span>
                 <span v-else class="cell-empty">-</span>
               </td>
               <td>

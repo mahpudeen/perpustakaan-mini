@@ -23,6 +23,7 @@ const form = reactive<BookInput>({
   shelf: props.initial?.shelf ?? null,
   cube: props.initial?.cube ?? null,
   purchaseDate: props.initial?.purchaseDate ?? '',
+  price: props.initial?.price ?? null,
   coverUrl: props.initial?.coverUrl ?? '',
   coverData: props.initial?.coverData ?? '',
 })
@@ -148,6 +149,7 @@ const submit = () => {
     shelf: form.shelf,
     cube: form.cube,
     purchaseDate: form.purchaseDate,
+    price: form.price,
     coverUrl: form.coverUrl,
     coverData: form.coverData,
   })
@@ -222,16 +224,24 @@ const submit = () => {
           </select> -->
         </div>
       </label>
+      <label class="field">
+        <span>Kode buku</span>
+        <input v-model="form.code" class="input" />
+      </label>
       <div class="grid-2">
-        <label class="field">
-          <span>Kode buku</span>
-          <input v-model="form.code" class="input" />
-        </label>
         <label class="field">
           <span>Tanggal beli</span>
           <input v-model="form.purchaseDate" type="date" class="input" />
         </label>
+        <label class="field">
+          <span class="field-label-row">
+            <span>Harga</span>
+            <span class="field-opt">Opsional</span>
+          </span>
+          <UiPriceInput id="book-price-input" v-model="form.price" />
+        </label>
       </div>
+      <p class="hint" style="margin-top: -0.5rem;">Opsional. Kosongkan bila belum diketahui.</p>
       <label class="field">
         <span>Kategori</span>
         <select v-model="form.category" class="input">

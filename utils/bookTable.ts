@@ -1,8 +1,29 @@
 import type { Book } from '~/composables/useBooks'
 
-export type SortColumn = 'kode' | 'judul' | 'pengarang' | 'kategori' | 'tgl'
+export type SortColumn = 'kode' | 'judul' | 'pengarang' | 'kategori' | 'tgl' | 'harga'
 export type SortDirection = 'asc' | 'desc'
 export type ViewMode = 'tabel' | 'kartu'
+export type PriceFilter = '' | 'isi' | 'kosong'
+
+/**
+ * Perbandingan numerik untuk pengurutan harga.
+ * Nilai kosong (null/undefined/NaN) selalu diletakkan di paling bawah, baik saat asc maupun desc.
+ */
+export function numericCompare(
+  a: number | null | undefined,
+  b: number | null | undefined,
+  direction: SortDirection = 'asc',
+): number {
+  const emptyA = a === null || a === undefined || !Number.isFinite(a)
+  const emptyB = b === null || b === undefined || !Number.isFinite(b)
+
+  if (emptyA && emptyB) return 0
+  if (emptyA) return 1
+  if (emptyB) return -1
+
+  const diff = (a as number) - (b as number)
+  return direction === 'desc' ? -diff : diff
+}
 
 /**
  * Natural sort perbandingan string sesuai kaidah bahasa Indonesia.
@@ -53,8 +74,15 @@ export function filterBooks(
   categoryFilter: string,
   getCategoryName: (book: Book) => string = (b) => b.category || '',
   isCategoryMatch?: (book: Book, filter: string) => boolean,
+  priceFilter?: string,
 ): Book[] {
   let result = books
+
+  if (priceFilter === 'isi') {
+    result = result.filter((b) => b.price !== null && b.price !== undefined)
+  } else if (priceFilter === 'kosong') {
+    result = result.filter((b) => b.price === null || b.price === undefined)
+  }
 
   if (categoryFilter) {
     if (isCategoryMatch) {
@@ -101,28 +129,33 @@ export function sortBooks(
   getCategoryName: (book: Book) => string = (b) => b.category || '',
 ): Book[] {
   return [...books].sort((a, b) => {
-    let valA = ''
-    let valB = ''
+    if (column === 'harga') {
+      const primary = numericCompare(a.price, b.price, direction)
+      if (primary !== 0) return primary
+    } else {
+      let valA = ''
+      let valB = ''
 
-    if (column === 'kode') {
-      valA = a.code || ''
-      valB = b.code || ''
-    } else if (column === 'judul') {
-      valA = a.title || ''
-      valB = b.title || ''
-    } else if (column === 'pengarang') {
-      valA = a.author || ''
-      valB = b.author || ''
-    } else if (column === 'kategori') {
-      valA = getCategoryName(a) || ''
-      valB = getCategoryName(b) || ''
-    } else if (column === 'tgl') {
-      valA = a.purchaseDate || ''
-      valB = b.purchaseDate || ''
+      if (column === 'kode') {
+        valA = a.code || ''
+        valB = b.code || ''
+      } else if (column === 'judul') {
+        valA = a.title || ''
+        valB = b.title || ''
+      } else if (column === 'pengarang') {
+        valA = a.author || ''
+        valB = b.author || ''
+      } else if (column === 'kategori') {
+        valA = getCategoryName(a) || ''
+        valB = getCategoryName(b) || ''
+      } else if (column === 'tgl') {
+        valA = a.purchaseDate || ''
+        valB = b.purchaseDate || ''
+      }
+
+      const primary = naturalCompare(valA, valB, direction)
+      if (primary !== 0) return primary
     }
-
-    const primary = naturalCompare(valA, valB, direction)
-    if (primary !== 0) return primary
 
     // Tie-breaker: Kode (natural, naik), lalu Judul (natural, naik)
     const tieCode = naturalCompare(a.code || '', b.code || '', 'asc')

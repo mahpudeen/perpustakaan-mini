@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { parseAndValidateBooks, type ImportRow } from '~/utils/importBooks'
+import { formatRupiah } from '~/utils/rupiah'
 
 definePageMeta({ middleware: 'owner' })
 useHead({ title: 'Import JSON · Perpustakaan Mini' })
@@ -87,6 +88,7 @@ const sampleJson = `[
     "code": "AGM-01",
     "category": "Fiksi",
     "purchaseDate": "2026-11-06",
+    "price": 95000,
     "synopsis": "Kisah tentang 10 anak di Belitung\\nyang berjuang untuk meraih mimpi.",
     "shelf": 1,
     "cube": 1,
@@ -104,6 +106,7 @@ const fillSample = () => {
     "code": "AGM-01",
     "category": "${defaultCategory}",
     "purchaseDate": "2026-11-06",
+    "price": 95000,
     "synopsis": "Kisah tentang kehidupan 10 murid di desa Gantung, Belitung Timur.\\nMenampilkan persahabatan dan semangat belajar yang gigih.",
     "shelf": 1,
     "cube": 1,
@@ -202,6 +205,7 @@ const fillSample = () => {
               <th scope="col" class="col-author">Pengarang</th>
               <th scope="col" class="col-category">Kategori</th>
               <th scope="col" class="col-date">Tgl Beli</th>
+              <th scope="col" class="col-price">Harga</th>
               <th scope="col" class="col-synopsis">Sinopsis</th>
               <th scope="col" class="col-status">Status</th>
             </tr>
@@ -240,6 +244,10 @@ const fillSample = () => {
               </td>
               <td class="col-date">
                 <span v-if="r.book.purchaseDate">{{ r.book.purchaseDate }}</span>
+                <span v-else class="cell-empty">-</span>
+              </td>
+              <td class="col-price font-tabular">
+                <span v-if="r.book.price != null">{{ formatRupiah(r.book.price) }}</span>
                 <span v-else class="cell-empty">-</span>
               </td>
               <td class="col-synopsis" :title="r.book.synopsis || undefined">

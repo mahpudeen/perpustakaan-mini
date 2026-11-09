@@ -20,6 +20,7 @@ export interface Figure {
   photoData: string // data:image/...;base64,...
   shelf: number | null // 1 sampai 2
   cube: number | null // 1 sampai 15
+  price: number | null // harga beli dalam Rupiah penuh, opsional
 }
 
 export type FigureInput = Omit<Figure, 'id'>
@@ -37,7 +38,14 @@ export const useFigures = () => {
       collection($db, 'figures'),
       (snap) => {
         figures.value = snap.docs
-          .map((d) => ({ id: d.id, ...(d.data() as Omit<Figure, 'id'>) }))
+          .map((d) => {
+            const data = d.data() as any
+            return {
+              id: d.id,
+              ...data,
+              price: data.price != null ? Number(data.price) : null,
+            } as Figure
+          })
           .sort((a, b) => a.name.localeCompare(b.name, 'id', { numeric: true, sensitivity: 'base' }))
         loaded.value = true
         error.value = null

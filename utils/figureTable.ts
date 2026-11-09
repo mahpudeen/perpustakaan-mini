@@ -1,15 +1,23 @@
 import type { Figure, FigureSize } from '~/composables/useFigures'
-import { naturalCompare, formatTanggal, paginate, buildPageList, type SortDirection } from '~/utils/bookTable'
+import { naturalCompare, formatTanggal, paginate, buildPageList, numericCompare, type SortDirection } from '~/utils/bookTable'
 
-export type FigureSortColumn = 'nama' | 'anime' | 'size' | 'tgl' | 'letak'
+export type FigureSortColumn = 'nama' | 'anime' | 'size' | 'tgl' | 'letak' | 'harga'
 
 export function filterFigures(
   figures: Figure[],
   query: string,
   animeFilter: string,
   sizeFilter: string,
+  priceFilter?: string,
 ): Figure[] {
   let result = figures
+
+  // Filter Harga
+  if (priceFilter === 'isi') {
+    result = result.filter((f) => f.price !== null && f.price !== undefined)
+  } else if (priceFilter === 'kosong') {
+    result = result.filter((f) => f.price === null || f.price === undefined)
+  }
 
   // Filter Anime
   if (animeFilter) {
@@ -105,6 +113,9 @@ export function sortFigures(
           cmp = direction === 'desc' ? -cubeDiff : cubeDiff
         }
       }
+      if (cmp !== 0) return cmp
+    } else if (column === 'harga') {
+      cmp = numericCompare(a.price, b.price, direction)
       if (cmp !== 0) return cmp
     }
 

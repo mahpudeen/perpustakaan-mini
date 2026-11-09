@@ -86,6 +86,7 @@ export const parseAndValidateBooks = (
           purchaseDate: '',
           coverUrl: '',
           coverData: '',
+          price: null,
         },
         errors: ['Baris bukan objek data buku yang valid.'],
         warnings: [],
@@ -126,6 +127,17 @@ export const parseAndValidateBooks = (
         cube = n
       } else {
         cubeInvalid = true
+      }
+    }
+
+    // Parse price
+    let price: number | null = null
+    if (obj.price !== undefined && obj.price !== null && obj.price !== '') {
+      const p = typeof obj.price === 'number' ? obj.price : Number(obj.price)
+      if (Number.isInteger(p) && p >= 0) {
+        price = p
+      } else {
+        errors.push('harga harus bilangan bulat >= 0')
       }
     }
 
@@ -245,6 +257,7 @@ export const parseAndValidateBooks = (
         shelf,
         cube,
         purchaseDate,
+        price,
         coverUrl,
         coverData: '',
       },

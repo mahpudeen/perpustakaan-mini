@@ -25,6 +25,7 @@ const form = reactive<FigureInput>({
   anime: props.initial?.anime ?? '',
   size: (props.initial?.size ?? 'medium') as FigureSize,
   purchaseDate: props.initial?.purchaseDate ?? '',
+  price: props.initial?.price ?? null,
   photoData: props.initial?.photoData ?? '',
   shelf: props.initial?.shelf ?? null,
   cube: props.initial?.cube ?? null,
@@ -81,6 +82,7 @@ const submit = () => {
     anime: canonicalAnime(form.anime, existingAnime.value),
     size: form.size,
     purchaseDate: form.purchaseDate,
+    price: form.price,
     photoData: form.photoData,
     shelf: form.shelf,
     cube: form.cube,
@@ -123,23 +125,32 @@ const submit = () => {
       </label>
 
       <!-- 3. Size -->
-      <div class="grid-2">
-        <label class="field">
-          <span>Ukuran (Size)</span>
-          <select v-model="form.size" class="input">
-            <option value="besar">Besar</option>
-            <option value="medium">Medium</option>
-            <option value="kecil">Kecil</option>
-          </select>
-          <p class="hint">Besar: 1 per kubus. Medium: 2 per kubus. Kecil: 4 per kubus.</p>
-        </label>
+      <label class="field">
+        <span>Ukuran (Size)</span>
+        <select v-model="form.size" class="input">
+          <option value="besar">Besar</option>
+          <option value="medium">Medium</option>
+          <option value="kecil">Kecil</option>
+        </select>
+        <p class="hint">Besar: 1 per kubus. Medium: 2 per kubus. Kecil: 4 per kubus.</p>
+      </label>
 
-        <!-- 4. Tanggal Beli -->
+      <!-- 4. Tanggal Beli & Harga -->
+      <div class="grid-2">
         <label class="field">
           <span>Tanggal beli</span>
           <input v-model="form.purchaseDate" type="date" class="input" />
         </label>
+
+        <label class="field">
+          <span class="field-label-row">
+            <span>Harga</span>
+            <span class="field-opt">Opsional</span>
+          </span>
+          <UiPriceInput id="figure-price-input" v-model="form.price" />
+        </label>
       </div>
+      <p class="hint" style="margin-top: -0.5rem;">Opsional. Kosongkan bila belum diketahui.</p>
     </section>
 
     <!-- 5. Letak di Rak -->

@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { BookInput } from '~/composables/useBooks'
+import { formatRupiah } from '~/utils/rupiah'
 
 const route = useRoute()
 const router = useRouter()
@@ -96,6 +97,7 @@ const remove = async () => {
           <div v-if="book.code"><dt>Kode buku</dt><dd>{{ book.code }}</dd></div>
           <div v-if="book.isbn"><dt>ISBN</dt><dd>{{ book.isbn }}</dd></div>
           <div v-if="dateText"><dt>Dibeli</dt><dd>{{ dateText }}</dd></div>
+          <div v-if="book.price != null"><dt>Harga</dt><dd class="font-tabular">{{ formatRupiah(book.price) }}</dd></div>
         </dl>
 
         <div v-if="book.synopsis" class="synopsis">

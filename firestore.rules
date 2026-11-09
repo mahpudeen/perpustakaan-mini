@@ -13,7 +13,12 @@ service cloud.firestore {
         && request.resource.data.title.size() > 0
         && request.resource.data.title.size() <= 300
         && (!('coverData' in request.resource.data)
-            || request.resource.data.coverData.size() <= 150000);
+            || request.resource.data.coverData.size() <= 150000)
+        && (!('price' in request.resource.data)
+            || request.resource.data.price == null
+            || (request.resource.data.price is int
+                && request.resource.data.price >= 0
+                && request.resource.data.price <= 100000000000));
 
       allow delete: if request.auth != null
         && request.auth.uid == 'GANTI_DENGAN_UID_KAMU';
@@ -48,7 +53,12 @@ service cloud.firestore {
         && (!('anime' in request.resource.data)
             || (request.resource.data.anime is string && request.resource.data.anime.size() <= 100))
         && (!('photoData' in request.resource.data)
-            || request.resource.data.photoData.size() <= 150000);
+            || request.resource.data.photoData.size() <= 150000)
+        && (!('price' in request.resource.data)
+            || request.resource.data.price == null
+            || (request.resource.data.price is int
+                && request.resource.data.price >= 0
+                && request.resource.data.price <= 100000000000));
 
       allow delete: if request.auth != null
         && request.auth.uid == 'GANTI_DENGAN_UID_KAMU';

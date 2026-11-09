@@ -10,6 +10,7 @@ import {
   type SortDirection,
   type ViewMode,
 } from '~/utils/bookTable'
+import { formatRupiah } from '~/utils/rupiah'
 import { exportBooksToCsv } from '~/utils/exportCsv'
 import type { Book } from '~/composables/useBooks'
 
@@ -112,7 +113,7 @@ const selectedCategoryValue = computed(() => {
 
 const sortColumn = computed<SortColumn>(() => {
   const col = route.query.urut as SortColumn
-  return ['kode', 'judul', 'pengarang', 'kategori', 'tgl'].includes(col) ? col : 'kode'
+  return ['kode', 'judul', 'pengarang', 'kategori', 'tgl', 'harga'].includes(col) ? col : 'kode'
 })
 const sortDirection = computed<SortDirection>(() => (route.query.arah === 'desc' ? 'desc' : 'asc'))
 const pageParam = computed(() => {
@@ -124,6 +125,17 @@ const perPageParam = computed(() => {
   return [10, 25, 50, 100].includes(n) ? n : 10
 })
 const viewMode = computed<ViewMode>(() => (route.query.tampil === 'kartu' ? 'kartu' : 'tabel'))
+
+const priceFilter = computed<'isi' | 'kosong' | ''>(() => {
+  const val = route.query.harga
+  if (val === 'isi' || val === 'kosong') return val
+  return ''
+})
+
+const onPriceChange = (e: Event) => {
+  const val = (e.target as HTMLSelectElement).value
+  updateQuery({ harga: val || undefined, hal: 1 })
+}
 
 // Search input local state untuk debounce ke URL tetapi langsung reaktif di tabel
 const searchInput = ref(urlSearch.value)
@@ -149,6 +161,7 @@ const updateQuery = (changes: Record<string, string | number | undefined | null>
   // Hilangkan dari URL bila bernilai bawaan sesuai spesifikasi Bagian 4.7
   if (!next.q) delete next.q
   if (!next.kategori) delete next.kategori
+  if (!next.harga) delete next.harga
   if (next.urut === 'kode') delete next.urut
   if (next.arah === 'asc') delete next.arah
   if (next.hal === '1') delete next.hal
@@ -211,7 +224,7 @@ const goToPage = (page: number) => {
 const resetFilters = () => {
   searchInput.value = ''
   if (debounceTimer) clearTimeout(debounceTimer)
-  updateQuery({ q: undefined, kategori: undefined, hal: 1 })
+  updateQuery({ q: undefined, kategori: undefined, harga: undefined, hal: 1 })
 }
 
 // ── Dropdown Kategori dengan Jumlah Buku dari Seluruh Koleksi ──
@@ -274,6 +287,7 @@ const filteredBooks = computed(() =>
     categoryFilter.value,
     getCategoryName,
     isBookInCategory,
+    priceFilter.value,
   ),
 )
 
@@ -425,6 +439,7 @@ const onExportCsv = () => {
               <th scope="col" class="col-author">Pengarang</th>
               <th scope="col" class="col-category">Kategori</th>
               <th scope="col" class="col-date">Tgl Beli</th>
+              <th scope="col" class="col-price text-right">Harga</th>
               <th scope="col" class="col-actions">Aksi</th>
             </tr>
           </thead>
@@ -436,6 +451,7 @@ const onExportCsv = () => {
               <td class="col-author"><div class="skeleton-bar author" /></td>
               <td class="col-category"><div class="skeleton-bar badge" /></td>
               <td class="col-date"><div class="skeleton-bar date" /></td>
+              <td class="col-price text-right"><div class="skeleton-bar short" /></td>
               <td class="col-actions"><div class="skeleton-bar actions" /></td>
             </tr>
           </tbody>
@@ -544,6 +560,19 @@ const onExportCsv = () => {
                   />
                 </button>
               </th>
+              <th
+                scope="col"
+                class="col-price th-sortable text-right"
+                :aria-sort="sortColumn === 'harga' ? (sortDirection === 'asc' ? 'ascending' : 'descending') : 'none'"
+              >
+                <button type="button" class="th-sort-btn text-right" @click="toggleSort('harga')">
+                  <span>Harga</span>
+                  <IconsIconSort
+                    :direction="sortColumn === 'harga' ? sortDirection : 'none'"
+                    :size="14"
+                  />
+                </button>
+              </th>
               <th scope="col" class="col-actions">Aksi</th>
             </tr>
           </thead>
@@ -573,6 +602,10 @@ const onExportCsv = () => {
               </td>
               <td class="col-date">
                 <span v-if="b.purchaseDate">{{ formatTanggal(b.purchaseDate) }}</span>
+                <span v-else class="cell-empty">-</span>
+              </td>
+              <td class="col-price text-right font-tabular">
+                <span v-if="b.price != null">{{ formatRupiah(b.price) }}</span>
                 <span v-else class="cell-empty">-</span>
               </td>
               <td class="col-actions">

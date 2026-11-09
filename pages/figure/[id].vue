@@ -2,6 +2,7 @@
 import type { FigureInput } from '~/composables/useFigures'
 import { sizeLabel } from '~/utils/figure'
 import { formatTanggal } from '~/utils/bookTable'
+import { formatRupiah } from '~/utils/rupiah'
 
 const route = useRoute()
 const router = useRouter()
@@ -119,6 +120,10 @@ const remove = async () => {
           <div v-if="figure.purchaseDate">
             <dt>Dibeli</dt>
             <dd>{{ formatTanggal(figure.purchaseDate) }}</dd>
+          </div>
+          <div v-if="figure.price != null">
+            <dt>Harga</dt>
+            <dd class="font-tabular">{{ formatRupiah(figure.price) }}</dd>
           </div>
         </dl>
 
